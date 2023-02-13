@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Shopping Cart</h1>
+
+<h5>Your Items:</h5>
+
+{{message}}
+
+{% for post in usercart %}
+
+<div class="container">
+    <div class="row">
+        <div class="card" style="width: 18rem;">
+
+            <form action="{{ url_for('removeFromCart', item_name = post.item) }}" method="POST">
+            <li>
+                <a class="text-dark text-decoration-none" href="#">
+                    <img src="{{ post.img_url }}" class="card-img-top" alt="{{ post.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.item }} </h5>
+                        <p class="card-text">${{ post.price }}.00</p>
+                    </div>
+                </a>
+            </li>
+            <a type="submit" class="btn btn-danger"
+                href="{{ url_for('removeFromCart', item_name = post.item) }}"  action="">Delete</a>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<h6>Grand Total:</h6>
+
+{% endblock %}
