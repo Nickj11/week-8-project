@@ -1,11 +1,11 @@
 from flask import render_template, request, redirect, url_for, flash, Blueprint
-from forms import Usercreationform,Loginform
-from models import User, Cart, Product
+from ..models import User, Cart, Product
+from ..forms import LoginForm, UserCreationForm
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.security import check_password_hash
-from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth, basic
-basic_auth = HTTPBasicAuth()
-token_auth = HTTPTokenAuth()
+from .apihelperauth.authh import basic_auth, token_auth
+
+
 
 api = Blueprint('api', __name__)
 
@@ -29,27 +29,21 @@ def shopPageAPI():
 def singleItem(item_id):
 
     item = Product.query.get(item_id)
+    if item:
+        return{
+            'status': 'ok',
+            'total_result': 1,
+            'item':
+            item.to_dict()
+        }
 
-    return item.to_dict()
+    else:
+        return{
+        'status': 'not'
+    }
 
 
 
-
-
-
-
-@basic_auth.verify_password
-def verifyPassword(username, password):
-    user = User.query.filter_by(username=username).first()
-    if user:
-        if check_password_hash(user.password, password):
-            return user
-
-@token_auth.verify_token
-def verifyToken(token):
-    user = User.query.filter_by(apitoken=token).first()
-    if user:
-        return user
 
 
 
@@ -72,28 +66,34 @@ def signUpAPI():
         'message': ' successfully created '
     }
 
-
 @api.route('/api/login', methods=["POST"])
 @basic_auth.login_required
 def getToken():
     user = basic_auth.current_user()
     return {
         'status': 'ok',
-        'user': user.to_dict()
+        'user': user.to_dict(),
     }
 
+@api.route('/api/addcart/<int:item_id>', methods=["POST"])
+@token_auth.login_required
+def addCart():
+        data = request.json
+        
+        Get_item = data['item_id']
+        item = Product.query.get(Get_item)
+        user = token_auth.current_user()
+        
+        recipt = Cart(Get_item, user.id)
+        recipt.saveToDB()
 
-@api.route('/api/addcart/<int:item_id>', methods=["GET", "POST"])
-@login_required
-def addCart(item_id):
+        return {
+            'status': 'ok',
+            'message': f'Item successfully added {item.name} to cart.',
+            
+        } 
     
-    recipt = Cart(item_id, current_user.id)
-    recipt.saveToDB()
-
-    return {
-        'status': 'ok',
-        'message': 'Product successfully added to cart.'
-    } 
+ 
 
 @api.route('/api/mycart', methods=["GET", "POST"])
 @login_required
@@ -119,7 +119,7 @@ def deleteAll():
 
     cart = Cart.query.all()
     for product in cart:
-        product.deleteFromDB()
+        product.deletefromDB()
 
     return {
         'status': 'ok',
@@ -128,15 +128,20 @@ def deleteAll():
 
 
 
-@api.route('/api/cart/<int:item_id>/delete', methods=["GET", "POST"])
-@login_required
-def delete(item_id):
-    item = Cart.query.get(item_id)
+@api.route('/api/cart/delete', methods=["POST"])
+@token_auth.login_required()
+def Delete():
+
+    user = token_auth.current_user()
+    data = request.json
+    print(data['itemId'])
+    item = Cart.query.filter_by( user_id = user.id).filter_by(item_id = data['itemId']).first()
+    print(item)
 
     item.deleteFromDB()
+   
 
     return {
         'status': 'ok',
-        'message': 'products successfully deleted from cart'
+        'message': 'Item successfully deleted from cart'
     }
-

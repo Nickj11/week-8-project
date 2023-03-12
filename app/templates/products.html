@@ -1,0 +1,25 @@
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="container col-10 my-5">
+<div class="row">
+    {% for post in posts %}
+    <div class="card col-3">
+        <img class="card-img-top p-1" src="{{ post.img_url }}" alt="item.name">
+        <div class="card-body">
+            <h5 class="card-title my-4">{{post.item_name}}</h5>
+         
+            <h4 class="card-subtitle my-4">${{post.price}}</h4>
+            <a href=" {{url_for('addToCart', item_id = post.item_id)}}" class="btn btn-success">Add to Cart</a>
+         
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+    {% endblock %}

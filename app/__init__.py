@@ -6,11 +6,12 @@ from flask_login import LoginManager
 from flask_cors import CORS
 
 from .auth.routes import auth
-# from  .auth.api.routes import api
+from  .api.routes import api
 
 app = Flask(__name__)
 app.config.from_object(Config)
-CORS(app)
+CORS(app, origins=["*"])
+
 
 db.init_app(app)
 migrate = Migrate(app,db)
@@ -24,7 +25,7 @@ def load_user(user_id):
 
 
 app.register_blueprint(auth)
-# app.register_blueprint(api)
+app.register_blueprint(api)
 
 
 

@@ -9,21 +9,32 @@
             </div>
             <div class="mb-4">
                 <label for="formGroupExampleInput" class="form-label">Enter in your Username and password here!</label>
-            <form method="POST">
+
+
+                <form method = "POST">
+                    {{form.hidden_tag() }}
+                    
+                    {{form.username(class='form-control',placeholder='Username') }}
+                    {{form.password(class='form-control',placeholder='Password') }}
+                    {{form.submit(class='btn btn-primary') }}
+                </form>
+                </div>
+
+            <!-- <form method="POST">
                 {{ form.hidden_tag() }}
                 <label for="formGroupExampleInput" class="form-label">Username</label>
                 {{ form.username(class='form-control', placeholder='Username') }}
               </div>
               <div class="mb-3">
                 <label for="formGroupExampleInput2" class="form-label">Password</label>
-                <button id="bot" style="float: right" ="button" class="btn btn-link">Forgot Password</button>
+                <button id="bot" style="float: right" = "button" class="btn btn-link">Forgot Password</button>
                 {{ form.password(class='form-control', placeholder='Password') }}
                 <br>
                 {{ form.submit(class='btn btn-primary') }}
             </form>
                 <br>
               </div>
-            </div>
+            </div> -->
             <div>
                 <p class="test"> New To E-shop?</p>
                 <a id="create" href="/signup" class="mb-3 btn btn-light">Create Your E-shop Account</a>
